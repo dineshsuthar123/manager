@@ -1,0 +1,3 @@
+/* Reset Vite demo styles; keep a clean canvas */
+html, body, #root { height: 100%; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #fff; }
