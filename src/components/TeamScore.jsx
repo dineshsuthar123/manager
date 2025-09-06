@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const Card = styled.section`
@@ -33,6 +33,22 @@ const SelectBox = styled.div`
   padding: 6px 10px;
   font-size: 12px; color: #202224;
   display: inline-flex; align-items: center; gap: 6px;
+`;
+
+const DDWrap = styled.div`
+  position: relative; display: inline-block; min-width: 220px; /* prevent layout shift */
+`;
+const DDButton = styled(SelectBox)`
+  cursor: pointer; user-select: none; width: 100%; justify-content: space-between;
+`;
+const DDList = styled.ul`
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 50;
+  margin: 0; padding: 6px 0; list-style: none; background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; min-width: 100%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+`;
+const DDItem = styled.li`
+  padding: 8px 10px; font-size: 12px; color: #111827; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  &:hover{ background: #F3F4F6; }
 `;
 
 const Grid = styled.div`
@@ -118,15 +134,40 @@ const ArrowDown = () => (
 );
 
 const TeamScore = () => {
+  const [team, setTeam] = useState('Information Systems & AI Tools');
+  const [open, setOpen] = useState(false);
+  const ddRef = useRef(null);
+  useEffect(()=>{
+    const onDoc = (e)=>{ if(ddRef.current && !ddRef.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    return ()=>document.removeEventListener('mousedown', onDoc);
+  },[]);
+  const teamOptions = [
+    'Information Systems & AI Tools',
+    'Payments & Security',
+    'Data Platform',
+    'Customer Experience'
+  ];
   return (
     <Card>
       <Header>
         <div className="left">
           <span style={{fontWeight: 600}}>Team Score:</span>
-          <SelectBox>
-            Information Systems & AI Tools
-            <ChevronDown />
-          </SelectBox>
+          <DDWrap ref={ddRef}>
+            <DDButton onClick={()=>setOpen(v=>!v)} aria-haspopup="listbox" aria-expanded={open}>
+              <span style={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{team}</span>
+              <ChevronDown />
+            </DDButton>
+            {open && (
+              <DDList role="listbox">
+                {teamOptions.map(opt => (
+                  <DDItem key={opt} role="option" aria-selected={team===opt} onClick={()=>{ setTeam(opt); setOpen(false); }}>
+                    {opt}
+                  </DDItem>
+                ))}
+              </DDList>
+            )}
+          </DDWrap>
         </div>
         <div className="updated">
           <ClockIcon />

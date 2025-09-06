@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -18,6 +18,12 @@ const Header = styled.div`
 const SelectBox = styled.div`
   background:#fff; border:1px solid #E5E7EB; border-radius:8px; padding:6px 10px; font-size:12px; color:#202224; display:inline-flex; align-items:center; gap:6px;
 `;
+const DDWrap = styled.div` position:relative; display:inline-block; `;
+const DDButton = styled(SelectBox)` cursor:pointer; user-select:none; `;
+const DDList = styled.ul`
+  position:absolute; top:calc(100% + 6px); right:0; z-index:40; margin:0; padding:6px 0; list-style:none; background:#fff; border:1px solid #E5E7EB; border-radius:8px; min-width:160px; box-shadow:0 8px 20px rgba(0,0,0,0.06);
+`;
+const DDItem = styled.li` padding:8px 10px; font-size:12px; color:#111827; cursor:pointer; &:hover{background:#F3F4F6;} `;
 
 const Panel = styled.div`
   background:#F8F9FA; border:1px solid #EEF0F2; border-radius:10px; padding:10px; display:grid; gap:8px; margin-bottom: 10px;
@@ -112,12 +118,33 @@ const data = [
 export default function AttritionOverview(){
   const [openExit,setOpenExit]=useState(false);
   const [openTb,setOpenTb]=useState(false);
+  const [period,setPeriod]=useState('Last 6 months');
+  const [dept,setDept]=useState('AI & Technology');
+  const [openP,setOpenP]=useState(false); const [openD,setOpenD]=useState(false);
+  const pRef = useRef(null); const dRef = useRef(null);
+  useEffect(()=>{
+    const onDoc=(e)=>{ if(pRef.current && !pRef.current.contains(e.target)) setOpenP(false); if(dRef.current && !dRef.current.contains(e.target)) setOpenD(false); };
+    document.addEventListener('mousedown', onDoc);
+    return ()=>document.removeEventListener('mousedown', onDoc);
+  },[]);
 
   return (
     <Card>
       <Header>
         <h3>Attrition Overview</h3>
-        <SelectBox>Last 6 months <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></SelectBox>
+        <DDWrap ref={pRef}>
+          <DDButton onClick={()=>setOpenP(v=>!v)} aria-haspopup="listbox" aria-expanded={openP}>
+            {period}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </DDButton>
+          {openP && (
+            <DDList role="listbox">
+              {['Last 3 months','Last 6 months','Last 12 months'].map(opt=> (
+                <DDItem key={opt} role="option" onClick={()=>{setPeriod(opt); setOpenP(false);}}>{opt}</DDItem>
+              ))}
+            </DDList>
+          )}
+        </DDWrap>
       </Header>
 
       <Panel>
@@ -145,7 +172,19 @@ export default function AttritionOverview(){
 
       <SubHeader>
         <span>Department-wise Attrition</span>
-        <SelectBox>AI & Technology <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></SelectBox>
+        <DDWrap ref={dRef}>
+          <DDButton onClick={()=>setOpenD(v=>!v)} aria-haspopup="listbox" aria-expanded={openD}>
+            {dept}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </DDButton>
+          {openD && (
+            <DDList role="listbox">
+              {['AI & Technology','HR & Admin','Finance','Smart Infra Group'].map(opt=> (
+                <DDItem key={opt} role="option" onClick={()=>{setDept(opt); setOpenD(false);}}>{opt}</DDItem>
+              ))}
+            </DDList>
+          )}
+        </DDWrap>
       </SubHeader>
 
       {/* Voluntary */}

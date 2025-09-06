@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const Card = styled.section`
@@ -13,6 +13,12 @@ const Header = styled.div`
 const SelectBox = styled.div`
   background:#F1F8FE; border:1px solid #D0E3FF; color:#202224; border-radius:999px; padding:8px 12px; display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px;
 `;
+const DDWrap = styled.div` position:relative; display:inline-block; `;
+const DDButton = styled(SelectBox)` cursor:pointer; user-select:none; `;
+const DDList = styled.ul`
+  position:absolute; top:calc(100% + 6px); left:0; z-index:30; margin:0; padding:6px 0; list-style:none; background:#fff; border:1px solid #E5E7EB; border-radius:10px; min-width:240px; box-shadow:0 10px 24px rgba(0,0,0,0.06);
+`;
+const DDItem = styled.li` padding:10px 12px; font-size:13px; color:#111827; cursor:pointer; &:hover{background:#F3F4F6;} `;
 
 const Tiles = styled.div`
   display:grid; gap:10px; grid-template-columns:1fr; 
@@ -80,16 +86,33 @@ const Down = () => (
 );
 
 export default function DepartmentWiseAnalysisHybrid(){
+  const [group, setGroup] = useState('Smart Infra Group');
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(()=>{
+    const onDoc=(e)=>{ if(ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    return ()=>document.removeEventListener('mousedown', onDoc);
+  },[]);
   return (
     <Card>
       <Header>
         <h3>Department Wise Analysis For Hybrid</h3>
       </Header>
 
-      <SelectBox>
-        <BuildingIcon /> Smart Infra Group
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft:'auto'}}><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </SelectBox>
+      <DDWrap ref={ref}>
+        <DDButton onClick={()=>setOpen(v=>!v)}>
+          <BuildingIcon /> {group}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginLeft:'auto'}}><path d="M6 9l6 6 6-6" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </DDButton>
+        {open && (
+          <DDList>
+            {['Smart Infra Group','AI & Technology','Corporate Services','R&D'].map(opt => (
+              <DDItem key={opt} onClick={()=>{ setGroup(opt); setOpen(false); }}>{opt}</DDItem>
+            ))}
+          </DDList>
+        )}
+      </DDWrap>
 
       <Tiles>
         <TileRow>
