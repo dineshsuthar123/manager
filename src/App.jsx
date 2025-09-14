@@ -1,5 +1,8 @@
+import React, { useState } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
+import Diary from './components/Diary';
+import Bookmark from './components/Bookmark';
 import PerformanceMetrics from './components/PerformanceMetrics';
 import LeftMiniHeader from './components/LeftMiniHeader';
 import AttritionOverview from './components/AttritionOverview';
@@ -36,9 +39,14 @@ const CenterCol = styled.div`
 `;
 
 function App() {
+  const [openDiary, setOpenDiary] = useState(false);
+  const [openBookmark, setOpenBookmark] = useState(false);
   return (
     <div>
-      <Navbar />
+      <Navbar 
+        onOpenDiary={() => setOpenDiary(true)} 
+        onOpenBookmark={() => setOpenBookmark(!openBookmark)} 
+      />
       <Main>
         <PageGrid>
           <div style={{display:'grid', gap:12, minWidth:0}}>
@@ -59,6 +67,8 @@ function App() {
           </div>
         </PageGrid>
       </Main>
+      <Diary open={openDiary} onClose={() => setOpenDiary(false)} />
+      {openBookmark && <Bookmark onClose={() => setOpenBookmark(false)} />}
     </div>
   );
 }

@@ -233,7 +233,7 @@ const CalendarWithMark = styled.div`
   svg.mark { position: absolute; right: -2px; top: -2px; }
 `;
 
-export default function Navbar() {
+export default function Navbar({ onOpenDiary, onOpenBookmark }) {
   const [tab, setTab] = useState('manager');
 
   return (
@@ -256,8 +256,8 @@ export default function Navbar() {
             </SearchPill>
           </SearchWrap>
           <Icons>
-            <IconBox title="Diary" className="hide-sm"><DiaryIcon /></IconBox>
-            <IconBox title="Bookmark" className="hide-sm"><BookmarkIcon /></IconBox>
+            <IconBox title="Diary" className="hide-sm" onClick={onOpenDiary} style={{cursor:'pointer'}}><DiaryIcon /></IconBox>
+            <IconBox title="Bookmark" className="hide-sm" onClick={onOpenBookmark} style={{cursor:'pointer'}}><BookmarkIcon /></IconBox>
             <IconBox title="Password" className="hide-sm"><KeyIcon /></IconBox>
             <IconBox title="Customise" className="hide-md"><CustomizeIcon /></IconBox>
             <Badge count={4} color="#F93C65">
